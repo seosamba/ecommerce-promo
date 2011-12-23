@@ -1,0 +1,29 @@
+<?php $uniqId = substr(md5(time()),5,15); ?>
+<?php if (isset($this->data)): ?>
+<h1>Promo deal: make a special offer</h1>
+<div class="padding5px">
+@todo: write here how to use it....
+</div>
+<form id="form-<?= $uniqId; ?>" action="<?= trim($this->websiteUrl, '/') . $this->url(isset($this->data)?array('productId' => $this->data['product_id']) : null); ?>" method="POST">
+    <div>
+        <label for="promo-price"><?= $this->translate('Sale price'); ?>:</label>
+        <?php echo $this->formText('promo-price', isset($this->data) ? $this->data['promo_price'] : null); ?>
+    </div>
+    <div>
+        <label for="Promo"><?= $this->translate('Expiry date'); ?>:</label>
+        <?php echo $this->formText('promo-due', isset($this->data) ? $this->data['promo_due']: null); ?>
+    </div>
+    <div>
+        <?php echo $this->formSubmit('promo-save', 'Apply');?>
+    </div>
+</form>
+<script>
+    if (window.jQuery && jQuery.ui) {
+        $('#promo-due').datepicker({ dateFormat: 'yy-mm-dd' });
+    }
+</script>
+
+<?php else: ?>
+<h1>Product is not saved!</h1>
+<p>Click on SAVE button and then reopen this tab</p>
+<?php endif;?>
