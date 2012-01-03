@@ -4,7 +4,7 @@
 <div class="padding5px">
 @todo: write here how to use it....
 </div>
-<form id="form-<?= $uniqId; ?>" action="<?= trim($this->websiteUrl, '/') . $this->url(isset($this->data)?array('productId' => $this->data['product_id']) : null); ?>" method="POST">
+<form class="binded-plugin" id="form-<?= $uniqId; ?>" action="<?= trim($this->websiteUrl, '/') . $this->url(isset($this->data)?array('productId' => $this->data['product_id']) : null); ?>" method="POST">
     <div>
         <label for="promo-price"><?= $this->translate('Sale price'); ?>:</label>
         <?php echo $this->formText('promo-price', isset($this->data) ? $this->data['promo_price'] : null); ?>

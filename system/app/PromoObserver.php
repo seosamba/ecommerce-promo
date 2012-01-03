@@ -20,7 +20,7 @@ class PromoObserver implements Interfaces_Observer {
             if (strtotime($row->promo_due) < time()){
                 $row->delete();
             } else {
-                $object->setSalePrice($row->promo_price);
+                $object->setCurrentPrice($row->promo_price);
             }
         }
     }

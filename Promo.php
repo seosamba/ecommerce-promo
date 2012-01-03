@@ -81,9 +81,4 @@ class Promo extends Tools_Plugins_Abstract {
         return null;
     }
 
-    public function notify($object)
-    {
-        $object->setPrice('FUCKER');
-    }
-
 }
