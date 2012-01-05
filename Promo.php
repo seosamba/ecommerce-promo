@@ -1,8 +1,4 @@
 <?php
-set_include_path(implode(PATH_SEPARATOR, array(
-    realpath(__DIR__ . '/system/app'),
-    get_include_path(),
-)));
 /**
  * Promo price plugin for SEOTOASTER 2.0 eCommerce part
  */
@@ -23,6 +19,7 @@ class Promo extends Tools_Plugins_Abstract {
         if (!empty($missedPlugins)) {
             throw new Exceptions_SeotoasterPluginException('Required plugins should be enabled: <b>'.implode(',', $missedPlugins).'</b>');
         }
+        $this->_jsonHelper = Zend_Controller_Action_HelperBroker::getExistingHelper('json');
 
         $this->_view->setUseStreamWrapper(true)->setScriptPath(__DIR__.'/system/views');
     }
@@ -62,7 +59,11 @@ class Promo extends Tools_Plugins_Abstract {
             } catch (Exception $e) {
                 echo $e->getMessage();
             }
-            echo json_encode(array('result'=>$result));
+            $this->_jsonHelper->direct(array(
+                'result'    => $this->_translator->translate( (boolean)$result ? 'Done' : 'Error' ) ,
+                'callback'  => null
+            ));
+
             return;
         }
 
