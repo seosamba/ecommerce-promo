@@ -9,4 +9,4 @@ CREATE TABLE IF NOT EXISTS `plugin_promo` (
 ALTER TABLE `plugin_promo`
   ADD CONSTRAINT `plugin_promo_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `shopping_product` (`id`);
 
-INSERT INTO `observers_queue` (`namespace`, `observer`) VALUES ('Models_Model_Product', 'PromoObserver');
+INSERT INTO `observers_queue` (`observable`, `observer`) VALUES ('Models_Model_Product', 'PromoObserver');
