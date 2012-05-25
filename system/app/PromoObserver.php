@@ -17,9 +17,10 @@ class PromoObserver implements Interfaces_Observer {
     {
         $row = $this->_dbTable->find($object->getId())->current();
         if ($row !== null) {
-            if (strtotime($row->promo_due) < time()){
+	        $now = time();
+            if (strtotime($row->promo_due) < $now){
                 $row->delete();
-            } else {
+            } elseif (strtotime($row->promo_from) < $now) {
                 $object->setCurrentPrice($row->promo_price);
             }
         }

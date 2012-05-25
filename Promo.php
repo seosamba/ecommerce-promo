@@ -10,7 +10,6 @@ class Promo extends Tools_Plugins_Abstract {
     );
 
 	protected function _init() {
-
         $enabledPlugins = array();
         foreach (Tools_Plugins_Tools::getEnabledPlugins() as $plugin) {
             array_push($enabledPlugins, $plugin->getName());
@@ -53,9 +52,13 @@ class Promo extends Tools_Plugins_Abstract {
 
         if ($this->_request->isPost()) {
             $row->promo_price   = filter_var($this->_request->getParam('promo-price'), FILTER_SANITIZE_STRING);
+            $row->promo_from     = filter_var($this->_request->getParam('promo-from'), FILTER_SANITIZE_STRING);
             $row->promo_due     = filter_var($this->_request->getParam('promo-due'), FILTER_SANITIZE_STRING);
             try {
                 $result = $row->save();
+	            if ($result) {
+		            Zend_Controller_Action_HelperBroker::getStaticHelper('cache')->clean(false, false, array('prodid_'.$row->product_id));
+	            }
             } catch (Exception $e) {
                 echo $e->getMessage();
             }

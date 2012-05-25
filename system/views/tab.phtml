@@ -1,25 +1,33 @@
 <?php $uniqId = substr(md5(time()),5,15); ?>
 <?php if (isset($this->data)): ?>
-<h1>Promo deal: make a special offer</h1>
-<div class="padding5px">
-@todo: write here how to use it....
-</div>
+<h1 class="mleft20px mb10px mt5px">Promo deal: make a special offer</h1>
 <form class="binded-plugin" id="form-<?= $uniqId; ?>" action="<?= trim($this->websiteUrl, '/') . $this->url(isset($this->data)?array('productId' => $this->data['product_id']) : null); ?>" method="POST">
-    <div>
-        <label for="promo-price"><?= $this->translate('Sale price'); ?>:</label>
-        <?php echo $this->formText('promo-price', isset($this->data) ? $this->data['promo_price'] : null); ?>
+    <div class="grid_6">
+        <label for="promo-price"><?= $this->translate('Sale price'); ?> (<span id="promo-price-unit"></span>):</label>
     </div>
-    <div>
-        <label for="Promo"><?= $this->translate('Expiry date'); ?>:</label>
-        <?php echo $this->formText('promo-due', isset($this->data) ? $this->data['promo_due']: null); ?>
+	<div class="grid_6">
+	    <?php echo $this->formText('promo-price', isset($this->data) ? $this->data['promo_price'] : null); ?>
     </div>
+    <div class="grid_6">
+        <label for="promo-from"><?= $this->translate('Starting date'); ?>:</label>
+    </div>
+	<div class="grid_6">
+	    <?php echo $this->formText('promo-from', isset($this->data) ? $this->data['promo_from']: null); ?>
+    </div>
+	<div class="grid_6">
+	<label for="promo-due"><?= $this->translate('Expiry date'); ?>:</label>
+	</div>
+	<div class="grid_6">
+		<?php echo $this->formText('promo-due', isset($this->data) ? $this->data['promo_due']: null); ?>
+	</div>
     <div>
         <?php echo $this->formSubmit('promo-save', 'Apply');?>
     </div>
 </form>
 <script>
     if (window.jQuery && jQuery.ui) {
-        $('#promo-due').datepicker({ dateFormat: 'yy-mm-dd' });
+	    $('#promo-price-unit').text($('#currency-unit').text());
+        $('#promo-from,#promo-due').datepicker({ dateFormat: 'yy-mm-dd' });
     }
 </script>
 
