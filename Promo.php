@@ -20,7 +20,7 @@ class Promo extends Tools_Plugins_Abstract {
         }
         $this->_jsonHelper = Zend_Controller_Action_HelperBroker::getExistingHelper('json');
 
-        $this->_view->setUseStreamWrapper(true)->setScriptPath(__DIR__.'/system/views');
+        $this->_view->setScriptPath(__DIR__.'/system/views');
     }
 
 	public function run($requestedParams = array()) {
