@@ -7,12 +7,20 @@ class PromoObserver implements Interfaces_Observer {
 
     private $_dbTable;
 
-    function __construct()
+	private static $_configParams = null;
+
+    public function __construct()
     {
+	    if (self::$_configParams === null){
+		    self::$_configParams = Models_Mapper_ShoppingConfig::getInstance()->getConfigParams();
+	    }
         $this->_dbTable = new Promo_DbTables_PromoDbTable();
     }
 
 
+	/**
+	 * @param $object Models_Model_Product
+	 */
     public function notify($object)
     {
         $row = $this->_dbTable->find($object->getId())->current();
@@ -22,6 +30,10 @@ class PromoObserver implements Interfaces_Observer {
                 $row->delete();
             } elseif (strtotime($row->promo_from) < $now) {
                 $object->setCurrentPrice($row->promo_price);
+	            $object->addExtraProperty(array(
+		            'g:sale_price' => $row->promo_price .' '. self::$_configParams['currency'],
+		            'g:sale_price_effective_date' => date(DATE_ATOM, strtotime($row->promo_from)).'/'.date(DATE_ATOM, strtotime($row->promo_due))
+	            ));
             }
         }
     }
