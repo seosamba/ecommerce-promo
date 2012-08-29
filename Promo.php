@@ -5,6 +5,8 @@
 
 class Promo extends Tools_Plugins_Abstract {
 
+	const DISPLAY_NAME = 'On sale';
+
     protected $_dependsOn = array(
         'shopping'
     );
