@@ -1,34 +1,58 @@
 <?php $uniqId = substr(md5(time()),5,15); ?>
 <?php if (isset($this->data)): ?>
-<h1 class="mleft20px mb10px mt5px">Promo deal: make a special offer</h1>
-<form class="binded-plugin" id="form-<?php echo $uniqId; ?>" action="<?php echo trim($this->websiteUrl, '/') . $this->url(isset($this->data)?array('productId' => $this->data['product_id']) : null); ?>" method="POST">
-    <div class="grid_6">
-        <label for="promo-price"><?php echo $this->translate('Sale price'); ?> (<span id="promo-price-unit"></span>):</label>
-    </div>
-	<div class="grid_6">
-	    <?php echo $this->formText('promo-price', isset($this->data) ? $this->data['promo_price'] : null); ?>
-    </div>
-    <div class="grid_6">
-        <label for="promo-from"><?php echo $this->translate('Starting date'); ?>:</label>
-    </div>
-	<div class="grid_6">
-	    <?php echo $this->formText('promo-from', isset($this->data) ? $this->data['promo_from']: null); ?>
-    </div>
-	<div class="grid_6">
-	<label for="promo-due"><?php echo $this->translate('Expiry date'); ?>:</label>
-	</div>
-	<div class="grid_6">
-		<?php echo $this->formText('promo-due', isset($this->data) ? $this->data['promo_due']: null); ?>
-	</div>
-    <div>
-        <?php echo $this->formSubmit('promo-save', 'Apply');?>
-    </div>
+<form class="binded-plugin clearfix prefix_3 suffix_3 grid_6" id="form-<?php echo $uniqId; ?>" action="<?php echo trim($this->websiteUrl, '/') . $this->url(isset($this->data)?array('productId' => $this->data['product_id']) : null); ?>" method="POST">
+	<fieldset><legend>Set this product on sale:</legend>
+	    <div class="grid_5">
+	        <label class="mt5px" for="promo-price"><?php echo $this->translate('Sale price'); ?> (<span id="promo-price-unit"></span>):</label>
+	    </div>
+		<div class="grid_7">
+		    <?php echo $this->formText('promo-price', isset($this->data) ? $this->data['promo_price'] : null); ?>
+	    </div>
+	    <div class="grid_5">
+	        <label class="mt5px"  for="promo-from"><?php echo $this->translate('Starting date'); ?>:</label>
+	    </div>
+		<div class="grid_7">
+		    <?php echo $this->formText('promo-from', isset($this->data) ? $this->data['promo_from']: null); ?>
+	    </div>
+		<div class="grid_5">
+		<label class="mt5px"  for="promo-due"><?php echo $this->translate('Expiry date'); ?>:</label>
+		</div>
+		<div class="grid_7">
+			<?php echo $this->formText('promo-due', isset($this->data) ? $this->data['promo_due']: null); ?>
+		</div>
+	    <div class="mt10px">
+	        <?php echo $this->formSubmit('promo-save', 'Apply');?>
+	    </div>
+	</fieldset>
 </form>
 <script>
-    if (window.jQuery && jQuery.ui) {
+if (window.jQuery && jQuery.ui) {
+	$(function(){
 	    $('#promo-price-unit').text($('#currency-unit').text());
-        $('#promo-from,#promo-due').datepicker({ dateFormat: 'yy-mm-dd' });
-    }
+	    $('#promo-from').datepicker({
+		    dateFormat: 'yy-mm-dd',
+	        defaultDate: "+1w",
+		    changeMonth: true,
+		    changeYear: true,
+		    yearRange: "c-1:c+10",
+//		    numberOfMonths:2,
+		    onSelect: function(selectedDate){
+			    $('#promo-due').datepicker("option", "minDate", selectedDate);
+		    }
+	    });
+	    $('#promo-due').datepicker({
+            dateFormat: 'yy-mm-dd',
+            defaultDate: "+1w",
+            changeMonth: true,
+		    changeYear: true,
+		    yearRange: "c-1:c+10",
+//            numberOfMonths:2,
+            onSelect: function(selectedDate){
+                $('#promo-from').datepicker("option", "maxDate", selectedDate);
+            }
+        });
+	});
+}
 </script>
 
 <?php else: ?>
