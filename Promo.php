@@ -27,7 +27,7 @@ class Promo extends Tools_Plugins_Abstract {
 		if (!Tools_Security_Acl::isAllowed(Tools_Security_Acl::RESOURCE_ADMINPANEL)) {
 			$this->_response->clearAllHeaders()->setBody(null);
 			$this->_response->setHttpResponseCode(Api_Service_Abstract::REST_STATUS_FORBIDDEN)
-				->sendResponse();
+					->sendResponse();
 			exit;
 		}
 		$dispatchersResult = parent::run($requestedParams);
@@ -52,9 +52,11 @@ class Promo extends Tools_Plugins_Abstract {
 
 
 		if ($this->_request->isPost()) {
+			$promoFrom = filter_var($this->_request->getParam('promo-from'), FILTER_SANITIZE_STRING);
+			$promoDue = filter_var($this->_request->getParam('promo-due'), FILTER_SANITIZE_STRING);
 			$row->promo_price = filter_var($this->_request->getParam('promo-price'), FILTER_SANITIZE_STRING);
-			$row->promo_from = filter_var($this->_request->getParam('promo-from'), FILTER_SANITIZE_STRING);
-			$row->promo_due = filter_var($this->_request->getParam('promo-due'), FILTER_SANITIZE_STRING);
+			$row->promo_from = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoFrom));
+			$row->promo_due = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoDue));
 			try {
 				$result = $row->save();
 				if ($result) {
