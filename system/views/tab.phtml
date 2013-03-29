@@ -16,13 +16,13 @@
 				<label class="mt5px" for="promo-from"><?php echo $this->translate('Starting date'); ?>:</label>
 			</div>
 			<div class="grid_7">
-				<?php echo $this->formText('promo-from', isset($this->data['promo_from']) ? date('Y-M-d', strtotime($this->data['promo_from'])) : null); ?>
+				<?php echo $this->formText('promo-from', isset($this->data['promo_from']) ? date('d-M-Y', strtotime($this->data['promo_from'])) : null); ?>
 			</div>
 			<div class="grid_5">
 				<label class="mt5px" for="promo-due"><?php echo $this->translate('Expiry date'); ?>:</label>
 			</div>
 			<div class="grid_7">
-				<?php echo $this->formText('promo-due', isset($this->data['promo_due']) ? date('Y-M-d', strtotime($this->data['promo_due'])) : null); ?>
+				<?php echo $this->formText('promo-due', isset($this->data['promo_due']) ? date('d-M-Y', strtotime($this->data['promo_due'])) : null); ?>
 			</div>
 			<div class="mt10px">
 				<?php echo $this->formSubmit('promo-save', 'Apply');?>
@@ -34,7 +34,7 @@
 			$(function () {
 				$('#promo-price-unit').text($('#currency-unit').text());
 				$('#promo-from').datepicker({
-					dateFormat: 'yy-M-dd',
+					dateFormat: 'dd-M-yy',
 					changeMonth: true,
 					changeYear: true,
 					yearRange: "c-1:c+10",
@@ -43,7 +43,7 @@
 					}
 				});
 				$('#promo-due').datepicker({
-					dateFormat: 'yy-M-dd',
+					dateFormat: 'dd-M-yy',
 					defaultDate: "+1w",
 					changeMonth: true,
 					changeYear: true,
