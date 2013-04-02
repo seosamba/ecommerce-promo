@@ -29,7 +29,7 @@
 			</div>
 		</fieldset>
 	</form>
-	<script>
+	<script type="text/javascript">
 		if (window.jQuery && jQuery.ui) {
 			$(function () {
 				$('#promo-price-unit').text($('#currency-unit').text());
@@ -37,7 +37,7 @@
 					dateFormat: 'dd-M-yy',
 					changeMonth: true,
 					changeYear: true,
-					yearRange: "c-1:c+10",
+					yearRange: "c:c+10",
 					onSelect: function (selectedDate) {
 						$('#promo-due').datepicker("option", "minDate", selectedDate);
 					}
@@ -47,7 +47,7 @@
 					defaultDate: "+1w",
 					changeMonth: true,
 					changeYear: true,
-					yearRange: "c-1:c+10",
+					yearRange: "c:c+10",
 					onSelect: function (selectedDate) {
 						$('#promo-from').datepicker("option", "maxDate", selectedDate);
 					}

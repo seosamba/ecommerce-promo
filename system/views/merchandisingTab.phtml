@@ -1,0 +1,66 @@
+<?php $uniqId = substr(md5(time()), 5, 15); ?>
+<div id="promo" class="clearfix">
+	<form class="binded-plugin clearfix prefix_3 suffix_3 grid_6"
+	      id="promo-form-<?php echo $uniqId;?>"
+	      action="<?php echo trim($this->websiteUrl, '/') . $this->url(); ?>"
+	      method="POST">
+		<fieldset>
+			<legend><?php echo $this->translate('Set all products on sale');?>:</legend>
+			<div class="grid_5">
+				<label class="mt5px" for="promo-price"><?php echo $this->translate('Sale discount (%)'); ?>:</label>
+			</div>
+			<div class="grid_7">
+				<?php echo $this->formText('promo-price'); ?>
+			</div>
+			<div class="grid_12"></div>
+			<div class="grid_5">
+				<label class="mt5px" for="promo-from"><?php echo $this->translate('Starting date'); ?>:</label>
+			</div>
+			<div class="grid_7">
+				<?php echo $this->formText('promo-from'); ?>
+			</div>
+			<div class="grid_12"></div>
+			<div class="grid_5">
+				<label class="mt5px" for="promo-due"><?php echo $this->translate('Expiry date'); ?>:</label>
+			</div>
+			<div class="grid_7">
+				<?php echo $this->formText('promo-due'); ?>
+			</div>
+			<div class="mt10px">
+				<?php echo $this->formSubmit('promo-save', 'Apply to all products');?>
+			</div>
+		</fieldset>
+	</form>
+	<form class="binded-plugin clearfix prefix_3 suffix_3 grid_6"
+	      action="<?php echo trim($this->websiteUrl, '/') . $this->url().'/dismiss/1'; ?>"
+	      method="POST">
+		<?php echo $this->formSubmit('promo-dismiss', 'Dismiss all promo prices', array('class' => 'btn red-bg' ));?>
+	</form>
+</div>
+<script type="text/javascript">
+if (window.jQuery && jQuery.ui) {
+	$(function () {
+		var container = $('#promo-form-<?php echo $uniqId;?>');
+		$('#promo-price-unit', container).text($('#currency-unit').text());
+		$('#promo-from', container).datepicker({
+			dateFormat: 'dd-M-yy',
+			changeMonth: true,
+			changeYear: true,
+			yearRange: "c:c+10",
+			onSelect: function (selectedDate) {
+				$('#promo-due', container).datepicker("option", "minDate", selectedDate);
+			}
+		});
+		$('#promo-due', container).datepicker({
+			dateFormat: 'dd-M-yy',
+			defaultDate: "+1w",
+			changeMonth: true,
+			changeYear: true,
+			yearRange: "c:c+10",
+			onSelect: function (selectedDate) {
+				$('#promo-from', container).datepicker("option", "maxDate", selectedDate);
+			}
+		});
+	});
+}
+</script>
