@@ -28,20 +28,11 @@ class Promo extends Tools_Plugins_Abstract {
 		$this->_view->setScriptPath(__DIR__ . '/system/views');
 	}
 
-	public function run($requestedParams = array()) {
-		if (!Tools_Security_Acl::isAllowed(Tools_Security_Acl::RESOURCE_ADMINPANEL)) {
-			$this->_response->clearAllHeaders()->setBody(null);
-			$this->_response->setHttpResponseCode(Api_Service_Abstract::REST_STATUS_FORBIDDEN)
-					->sendResponse();
-			exit;
-		}
-		$dispatchersResult = parent::run($requestedParams);
-		if ($dispatchersResult) {
-			return $dispatchersResult;
-		}
-	}
-
 	public function tabAction() {
+		if (!Tools_Security_Acl::isAllowed(Shopping::RESOURCE_STORE_MANAGEMENT)){
+			throw new Exceptions_SeotoasterPluginException('Forbidden');
+		}
+
 		if (isset($this->_requestedParams['productId'])) {
 			$pid = $this->_requestedParams['productId'];
 
@@ -82,6 +73,10 @@ class Promo extends Tools_Plugins_Abstract {
 	}
 
 	public function merchandisingAction(){
+		if (!Tools_Security_Acl::isAllowed(Shopping::RESOURCE_STORE_MANAGEMENT)){
+			throw new Exceptions_SeotoasterPluginException('Forbidden');
+		}
+
 		$cacheHelper = Zend_Controller_Action_HelperBroker::getStaticHelper('cache');
 		if ($this->_request->isPost()){
 			$promoTable = new Zend_Db_Table('plugin_promo');
