@@ -29,13 +29,12 @@ class Promo extends Tools_Plugins_Abstract {
 	}
 
 	public function tabAction() {
-		if (!Tools_Security_Acl::isAllowed(Shopping::RESOURCE_STORE_MANAGEMENT)){
+		if (!Tools_Security_Acl::isAllowed(Shopping::RESOURCE_STORE_MANAGEMENT)) {
 			throw new Exceptions_SeotoasterPluginException('Forbidden');
 		}
 
-		if (isset($this->_requestedParams['productId'])) {
-			$pid = $this->_requestedParams['productId'];
-
+		$pid = $this->_request->getParam('productId');
+		if ($pid) {
 			$table = new Zend_Db_Table('plugin_promo');
 			$row = $table->find($pid)->current();
 			if ($row === null) {
@@ -72,19 +71,19 @@ class Promo extends Tools_Plugins_Abstract {
 		echo $this->_view->render('tab.phtml');
 	}
 
-	public function merchandisingAction(){
-		if (!Tools_Security_Acl::isAllowed(Shopping::RESOURCE_STORE_MANAGEMENT)){
+	public function merchandisingAction() {
+		if (!Tools_Security_Acl::isAllowed(Shopping::RESOURCE_STORE_MANAGEMENT)) {
 			throw new Exceptions_SeotoasterPluginException('Forbidden');
 		}
 
 		$cacheHelper = Zend_Controller_Action_HelperBroker::getStaticHelper('cache');
-		if ($this->_request->isPost()){
+		if ($this->_request->isPost()) {
 			$promoTable = new Zend_Db_Table('plugin_promo');
-			if ($this->_request->has('dismiss')){
+			if ($this->_request->has('dismiss')) {
 				try {
 					$result = $promoTable->delete('product_id IS NOT NULL');
-					$this->_responseHelper->success('Updated '.$result.' products');
-				} catch (Exception $e){
+					$this->_responseHelper->success('Updated ' . $result . ' products');
+				} catch (Exception $e) {
 					$this->_responseHelper->fail('Error');
 				}
 			} else {
@@ -93,9 +92,9 @@ class Promo extends Tools_Plugins_Abstract {
 					$promoFrom = filter_var($this->_request->getParam('promo-from'), FILTER_SANITIZE_STRING);
 					$promoDue = filter_var($this->_request->getParam('promo-due'), FILTER_SANITIZE_STRING);
 
-					if (is_numeric($discount)){
+					if (is_numeric($discount)) {
 						$discount = floatval($discount);
-						if ($discount > 100 || $discount < 0){
+						if ($discount > 100 || $discount < 0) {
 							$this->_responseHelper->fail($this->_translator->translate('Sales discount should be between 0 and 100 percents'));
 						}
 					} else {
@@ -103,12 +102,12 @@ class Promo extends Tools_Plugins_Abstract {
 					}
 
 					$dateValidator = new Zend_Validate_Date(array('format' => 'd-M-Y'));
-					if ($dateValidator->isValid($promoFrom)){
+					if ($dateValidator->isValid($promoFrom)) {
 						$promoFrom = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoFrom));
 					} else {
 						$this->_responseHelper->fail($this->_translator->translate('Wrong date format'));
 					}
-					if ($dateValidator->isValid($promoDue)){
+					if ($dateValidator->isValid($promoDue)) {
 						$promoDue = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoDue));
 					} else {
 						$this->_responseHelper->fail($this->_translator->translate('Wrong date format'));
@@ -119,7 +118,7 @@ class Promo extends Tools_Plugins_Abstract {
 					$promoTable->getAdapter()->query($sql);
 					$cacheHelper->clean(false, false, array('product_price'));
 					$this->_responseHelper->success($this->_translator->translate('All products were updated'));
-				} catch (Exception $e){
+				} catch (Exception $e) {
 					$this->_responseHelper->fail($e->getMessage());
 				}
 			}
