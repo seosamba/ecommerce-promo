@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS;
+DROP TABLE IF EXISTS `plugin_promo`;
 CREATE TABLE IF NOT EXISTS `plugin_promo` (
   `product_id` int(10) unsigned NOT NULL,
   `promo_price` decimal(10,2) NOT NULL,
