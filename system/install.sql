@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS;
 CREATE TABLE IF NOT EXISTS `plugin_promo` (
   `product_id` int(10) unsigned NOT NULL,
   `promo_price` decimal(10,2) NOT NULL,
@@ -6,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `plugin_promo` (
   PRIMARY KEY (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+UPDATE `plugin` SET `tags`='ecommerce,merchandising' WHERE `name` = 'promo';
 
 ALTER TABLE `plugin_promo`
   ADD CONSTRAINT `plugin_promo_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `shopping_product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
