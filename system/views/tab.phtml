@@ -4,7 +4,7 @@
 	      action="<?php echo trim($this->websiteUrl, '/') . $this->url(isset($this->data) ? array('productId' => $this->data['product_id']) : null); ?>"
 	      method="POST">
 		<fieldset>
-			<legend>Set this product on sale:</legend>
+			<legend><?php echo $this->translate('Set this product on sale');?>:</legend>
 			<div class="grid_5">
 				<label class="mt5px" for="promo-price"><?php echo $this->translate('Sale price'); ?> (<span
 							id="promo-price-unit"></span>):</label>
@@ -25,7 +25,7 @@
 				<?php echo $this->formText('promo-due', isset($this->data['promo_due']) ? date('d-M-Y', strtotime($this->data['promo_due'])) : null); ?>
 			</div>
 			<div class="mt10px">
-				<?php echo $this->formSubmit('promo-save', 'Apply');?>
+				<?php echo $this->formSubmit('promo-save', $this->translate('Apply'))?>
 			</div>
 		</fieldset>
 	</form>
@@ -57,6 +57,6 @@
 	</script>
 
 <?php else: ?>
-	<h1>Product is not saved!</h1>
-	<p>Click on SAVE button and then reopen this tab</p>
+	<h1><?php echo $this->translate('Product is not saved!');?></h1>
+	<p><?php echo $this->translate('Click on SAVE button and then reopen this tab');?></p>
 <?php endif; ?>

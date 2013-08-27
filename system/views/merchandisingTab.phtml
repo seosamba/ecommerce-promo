@@ -27,14 +27,14 @@
 				<?php echo $this->formText('promo-due'); ?>
 			</div>
 			<div class="mt10px">
-				<?php echo $this->formSubmit('promo-save', 'Apply to all products');?>
+				<?php echo $this->formSubmit('promo-save', $this->translate('Apply to all products'));?>
 			</div>
 		</fieldset>
 	</form>
 	<form class="binded-plugin clearfix prefix_3 suffix_3 grid_6"
 	      action="<?php echo trim($this->websiteUrl, '/') . $this->url().'/dismiss/1'; ?>"
 	      method="POST">
-		<?php echo $this->formSubmit('promo-dismiss', 'Dismiss all promo prices', array('class' => 'btn red-bg' ));?>
+		<?php echo $this->formSubmit('promo-dismiss', $this->translate('Dismiss all promo prices'), array('class' => 'btn red-bg' ));?>
 	</form>
 </div>
 <script type="text/javascript">

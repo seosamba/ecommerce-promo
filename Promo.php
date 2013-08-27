@@ -49,6 +49,14 @@ class Promo extends Tools_Plugins_Abstract {
 		if ($this->_request->isPost()) {
 			$promoFrom = filter_var($this->_request->getParam('promo-from'), FILTER_SANITIZE_STRING);
 			$promoDue = filter_var($this->_request->getParam('promo-due'), FILTER_SANITIZE_STRING);
+            $dateValidator = new Zend_Validate_Date(array('format' => 'd-M-Y', 'locale' => 'en'));
+            if (!$dateValidator->isValid($promoDue) || !$dateValidator->isValid($promoFrom)) {
+                $this->_jsonHelper->direct(array(
+                    'result'   => $this->_translator->translate('Wrong date format'),
+                    'callback' => null
+                ));
+            }
+
 			$row->promo_price = filter_var($this->_request->getParam('promo-price'), FILTER_SANITIZE_STRING);
 			$row->promo_from = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoFrom));
 			$row->promo_due = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoDue));
@@ -82,7 +90,7 @@ class Promo extends Tools_Plugins_Abstract {
 			if ($this->_request->has('dismiss')) {
 				try {
 					$result = $promoTable->delete('product_id IS NOT NULL');
-					$this->_responseHelper->success('Updated ' . $result . ' products');
+					$this->_responseHelper->success($this->_translator->translate('Updated') .' '. $result . ' products');
 				} catch (Exception $e) {
 					$this->_responseHelper->fail('Error');
 				}
@@ -101,7 +109,7 @@ class Promo extends Tools_Plugins_Abstract {
 						$this->_responseHelper->fail($this->_translator->translate('Sale discount should be a number'));
 					}
 
-					$dateValidator = new Zend_Validate_Date(array('format' => 'd-M-Y'));
+					$dateValidator = new Zend_Validate_Date(array('format' => 'd-M-Y', 'locale' => 'en'));
 					if ($dateValidator->isValid($promoFrom)) {
 						$promoFrom = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoFrom));
 					} else {
