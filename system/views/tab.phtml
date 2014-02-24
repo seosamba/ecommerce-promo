@@ -1,32 +1,29 @@
 <?php $uniqId = substr(md5(time()), 5, 15); ?>
 <?php if (isset($this->data)): ?>
-	<form class="binded-plugin clearfix prefix_3 suffix_3 grid_6" id="form-<?php echo $uniqId; ?>"
+	<form id="form-<?php echo $uniqId; ?>" class="binded-plugin clearfix prefix_3 suffix_3 grid_6 mt50px"
 	      action="<?php echo trim($this->websiteUrl, '/') . $this->url(isset($this->data) ? array('productId' => $this->data['product_id']) : null); ?>"
 	      method="POST">
-		<fieldset>
-			<legend><?php echo $this->translate('Set this product on sale');?>:</legend>
-			<div class="grid_5">
-				<label class="mt5px" for="promo-price"><?php echo $this->translate('Sale price'); ?> (<span
-							id="promo-price-unit"></span>):</label>
-			</div>
-			<div class="grid_7">
-				<?php echo $this->formText('promo-price', isset($this->data) ? $this->data['promo_price'] : null); ?>
-			</div>
-			<div class="grid_5">
-				<label class="mt5px" for="promo-from"><?php echo $this->translate('Starting date'); ?>:</label>
-			</div>
-			<div class="grid_7">
-				<?php echo $this->formText('promo-from', isset($this->data['promo_from']) ? date('d-M-Y', strtotime($this->data['promo_from'])) : null); ?>
-			</div>
-			<div class="grid_5">
-				<label class="mt5px" for="promo-due"><?php echo $this->translate('Expiry date'); ?>:</label>
-			</div>
-			<div class="grid_7">
-				<?php echo $this->formText('promo-due', isset($this->data['promo_due']) ? date('d-M-Y', strtotime($this->data['promo_due'])) : null); ?>
-			</div>
-			<div class="mt10px">
-				<?php echo $this->formSubmit('promo-save', $this->translate('Apply'))?>
-			</div>
+		<fieldset class="background">
+			<legend class="large background"><?php echo $this->translate('Set this product on sale');?>:</legend>
+			<p>
+				<label class="mt5px grid_5 alpha" for="promo-price"><?php echo $this->translate('Sale price'); ?> (<span id="promo-price-unit"></span>):</label>
+				<?php echo $this->formText('promo-price', isset($this->data) ? $this->data['promo_price'] : null, array('class' => 'grid_7 omega')); ?>
+			</p>
+			<p>
+				<label class="mt5px grid_5 alpha" for="promo-from"><?php echo $this->translate('Starting date'); ?>:</label>
+				<label class="labeled icon right grid_7 omega">
+				    <?php echo $this->formText('promo-from', isset($this->data['promo_from']) ? date('d-M-Y', strtotime($this->data['promo_from'])) : null); ?>
+                    <i class="icon-calendar icon16"></i>
+                </label>
+			</p>
+			<p>
+				<label class="mt5px grid_5 alpha" for="promo-due"><?php echo $this->translate('Expiry date'); ?>:</label>
+				<label class="labeled icon right grid_7 omega">
+                    <?php echo $this->formText('promo-due', isset($this->data['promo_due']) ? date('d-M-Y', strtotime($this->data['promo_due'])) : null); ?>
+                    <i class="icon-calendar icon16"></i>
+                </label>
+			</p>
+            <?php echo $this->formSubmit('promo-save', $this->translate('Apply'))?>
 		</fieldset>
 	</form>
 	<script type="text/javascript">
@@ -57,6 +54,8 @@
 	</script>
 
 <?php else: ?>
-	<h1><?php echo $this->translate('Product is not saved!');?></h1>
-	<p><?php echo $this->translate('Click on SAVE button and then reopen this tab');?></p>
+    <div class="message error mt2em">
+        <h1 class="error"><?php echo $this->translate('Product is not saved!');?></h1>
+        <p><?php echo $this->translate('Click on SAVE button and then reopen this tab');?></p>
+    </div>
 <?php endif; ?>
