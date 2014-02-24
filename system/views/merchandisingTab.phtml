@@ -20,45 +20,52 @@
                 <i class="icon-calendar icon16"></i>
             </label>
         </p>
-        <?php echo $this->formSubmit(
+        <?php echo $this->formButton(
             'promo-dismiss',
             $this->translate('Dismiss all promo prices'),
-            array('class' => 'btn error fl-left', 'form' => 'dismiss-promo')
+            array('class' => 'btn error fl-left', 'type' => 'submit')
         ); ?>
-        <?php echo $this->formSubmit('promo-save', $this->translate('Apply to all products')); ?>
+        <?php echo $this->formButton('promo-save', $this->translate('Apply to all products'), array('type' => 'submit')); ?>
     </fieldset>
 </form>
-<form id="dismiss-promo" action="<?php echo trim($this->websiteUrl, '/') . $this->url() . '/dismiss/1'; ?>" method="POST">
-<?php //echo $this->formSubmit(
-//            'promo-dismiss',
-//            $this->translate('Dismiss all promo prices'),
-//            array('class' => 'btn error')
-//        ); ?>
+<form id="dismiss-promo" class="binded-plugin" action="<?php echo trim($this->websiteUrl, '/') . $this->url() . '/dismiss/1'; ?>" method="POST">
+<?php
+//    echo $this->formSubmit(
+//        'promo-dismiss',
+//        $this->translate('Dismiss all promo prices'),
+//        array('class' => 'btn error')
+//    );
+?>
 </form>
 <script type="text/javascript">
-if(window.jQuery && jQuery.ui){
     $(function(){
-        var container = $('#promo-form-<?php echo $uniqId;?>');
-        $('#promo-price-unit', container).text($('#currency-unit').text());
-        $('#promo-from', container).datepicker({
-            dateFormat  : 'dd-M-yy',
-            changeMonth : true,
-            changeYear  : true,
-            yearRange   : "c:c+10",
-            onSelect    : function(selectedDate){
-                $('#promo-due', container).datepicker("option", "minDate", selectedDate);
-            }
-        });
-        $('#promo-due', container).datepicker({
-            dateFormat  : 'dd-M-yy',
-            defaultDate : "+1w",
-            changeMonth : true,
-            changeYear  : true,
-            yearRange   : "c:c+10",
-            onSelect    : function(selectedDate){
-                $('#promo-from', container).datepicker("option", "maxDate", selectedDate);
-            }
+        if(window.jQuery && jQuery.ui){
+            var container = $('#promo-form-<?php echo $uniqId;?>');
+            $('#promo-price-unit', container).text($('#currency-unit').text());
+            $('#promo-from', container).datepicker({
+                dateFormat  : 'dd-M-yy',
+                changeMonth : true,
+                changeYear  : true,
+                yearRange   : "c:c+10",
+                onSelect    : function(selectedDate){
+                    $('#promo-due', container).datepicker("option", "minDate", selectedDate);
+                }
+            });
+            $('#promo-due', container).datepicker({
+                dateFormat  : 'dd-M-yy',
+                defaultDate : "+1w",
+                changeMonth : true,
+                changeYear  : true,
+                yearRange   : "c:c+10",
+                onSelect    : function(selectedDate){
+                    $('#promo-from', container).datepicker("option", "maxDate", selectedDate);
+                }
+            });
+        }
+
+        $('#promo-dismiss').on('click', function(e){
+            e.preventDefault();
+            $("#dismiss-promo").submit();
         });
     });
-}
 </script>
