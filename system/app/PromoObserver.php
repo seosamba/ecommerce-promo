@@ -32,12 +32,19 @@ class PromoObserver implements Interfaces_Observer
                 $row->delete();
             } elseif (strtotime($row->promo_from) < $now) {
                 $object->setCurrentPrice($row->promo_price);
+
+                $salePrice = number_format(
+                    Tools_ShoppingCart::getInstance()->calculateProductPrice(
+                        $object,
+                        $object->getDefaultOptions()
+                    ),
+                    2,
+                    '.',
+                    ''
+                );
                 $object->addExtraProperty(
                     array(
-                        'g:sale_price' => Tools_ShoppingCart::getInstance()->calculateProductPrice(
-                                $object,
-                                $object->getDefaultOptions()
-                            ) . ' ' . self::$_configParams['currency'],
+                        'g:sale_price'                => $salePrice . ' ' . self::$_configParams['currency'],
                         'g:sale_price_effective_date' => date(DATE_ATOM, strtotime($row->promo_from)) . '/' . date(
                                 DATE_ATOM,
                                 strtotime($row->promo_due)
