@@ -13,14 +13,14 @@
 				<label class="mt5px grid_5 alpha" for="promo-from"><?php echo $this->translate('Starting date'); ?>:</label>
 				<label class="labeled icon right grid_7 omega">
 				    <?php echo $this->formText('promo-from', isset($this->data['promo_from']) ? date('d-M-Y', strtotime($this->data['promo_from'])) : null); ?>
-                    <i class="icon-calendar icon16"></i>
+                    <i class="ticon-calendar icon16"></i>
                 </label>
 			</p>
 			<p>
 				<label class="mt5px grid_5 alpha" for="promo-due"><?php echo $this->translate('Expiry date'); ?>:</label>
 				<label class="labeled icon right grid_7 omega">
                     <?php echo $this->formText('promo-due', isset($this->data['promo_due']) ? date('d-M-Y', strtotime($this->data['promo_due'])) : null); ?>
-                    <i class="icon-calendar icon16"></i>
+                    <i class="ticon-calendar icon16"></i>
                 </label>
 			</p>
             <?php echo $this->formSubmit('promo-save', $this->translate('Apply'), array('class' => 'btn icon-checkmark-3'))?>
