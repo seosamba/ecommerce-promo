@@ -85,6 +85,8 @@ class Promo extends Tools_Plugins_Abstract {
 		}
 
 		$cacheHelper = Zend_Controller_Action_HelperBroker::getStaticHelper('cache');
+        $promoGlobalConfigTable = new Zend_Db_Table('plugin_promo_main_config');
+        $globalConfigData = $promoGlobalConfigTable->fetchRow();
 		if ($this->_request->isPost()) {
 			$promoTable = new Zend_Db_Table('plugin_promo');
 			if ($this->_request->has('dismiss')) {
@@ -121,17 +123,35 @@ class Promo extends Tools_Plugins_Abstract {
 						$this->_responseHelper->fail($this->_translator->translate('Wrong date format'));
 					}
 
-					$sql = 'INSERT INTO `plugin_promo` SELECT id as product_id, ROUND(price-price*%1$d/100, 2) as promo_price, \'%2$s\' as promo_from, \'%3$s\' as promo_due FROM `shopping_product` ON DUPLICATE KEY UPDATE promo_price = ROUND(price-price*%1$d/100, 2), promo_from = \'%2$s\', promo_due = \'%3$s\'';
-					$sql = sprintf($sql, $discount, $promoFrom, $promoDue);
-					$promoTable->getAdapter()->query($sql);
-					$cacheHelper->clean(false, false, array('product_price'));
+                    $data = array(
+                       'promo_discount' => $discount,
+                       'promo_from' => $promoFrom,
+                       'promo_due'  => $promoDue,
+                       'price_type' => 'percent'
+                    );
+                    if (!empty($globalConfigData)) {
+                        $globalConfigData = $globalConfigData->toArray();
+                        $where = $promoGlobalConfigTable->getAdapter()->quoteInto('id = ?', $globalConfigData['id']);
+                        $promoGlobalConfigTable->update($data, $where);
+                    } else {
+                        $promoGlobalConfigTable->insert($data);
+                    }
+                    $promoTable->delete('product_id IS NOT NULL');
+                    $cacheHelper->clean(false, false, array('product_price'));
 					$this->_responseHelper->success($this->_translator->translate('All products were updated'));
 				} catch (Exception $e) {
 					$this->_responseHelper->fail($e->getMessage());
 				}
 			}
 			$this->_responseHelper->response('Bad request', true, 400);
-		}
+		} else {
+            if (!empty($globalConfigData)) {
+                $globalConfigData = $globalConfigData->toArray();
+                $this->_view->discountPrice = $globalConfigData['promo_discount'];
+                $this->_view->promoFrom =  $globalConfigData['promo_from'];
+                $this->_view->promoDue = $globalConfigData['promo_due'];
+            }
+        }
 		echo $this->_view->render('merchandisingTab.phtml');
 	}
 

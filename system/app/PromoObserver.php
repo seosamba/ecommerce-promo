@@ -25,13 +25,38 @@ class PromoObserver implements Interfaces_Observer
      */
     public function notify($object)
     {
-        $row = $this->_dbTable->find($object->getId())->current();
-        if ($row !== null) {
+        $prodId = $object->getId();
+        $promoConfig = $this->_dbTable->getAllPromoConfigData($prodId);
+        if(!empty($promoConfig)){
+            $currentPromo = array_shift($promoConfig);
             $now = time();
-            if (strtotime($row->promo_due) < $now) {
-                $row->delete();
-            } elseif (strtotime($row->promo_from) < $now) {
-                $object->setCurrentPrice($row->promo_price);
+            if (strtotime($currentPromo['promo_due']) < $now) {
+                if ($currentPromo['scope'] === 'global') {
+                    $promoGlobalConfigTable = new Zend_Db_Table('plugin_promo_main_config');
+                    $promoGlobalConfigTable->delete('id IS NOT NULL');
+                }
+            } elseif (strtotime($currentPromo['promo_from']) < $now) {
+                $currentPrice = $object->getCurrentPrice();
+                if (empty($currentPrice)) {
+                    $currentPrice = $object->getOriginalPrice();
+                }
+
+                $currentPromo['sign'] = 'minus';
+                $priceWithPromo = Tools_DiscountTools::applyDiscountData($currentPrice, $currentPromo);
+                $object->setCurrentPrice($priceWithPromo);
+
+                $productDiscounts = $object->getProductDiscounts();
+                array_push(
+                    $productDiscounts,
+                    array(
+                        'name' => 'promo',
+                        'discount' => $currentPromo['discount'],
+                        'type' => $currentPromo['type'],
+                        'sign' => $currentPromo['sign']
+                    )
+                );
+                $object->setProductDiscounts($productDiscounts);
+
 
                 $salePrice = number_format(
                     Tools_ShoppingCart::getInstance()->calculateProductPrice(
@@ -45,9 +70,9 @@ class PromoObserver implements Interfaces_Observer
                 $object->addExtraProperty(
                     array(
                         'g:sale_price'                => $salePrice . ' ' . self::$_configParams['currency'],
-                        'g:sale_price_effective_date' => date(DATE_ATOM, strtotime($row->promo_from)) . '/' . date(
+                        'g:sale_price_effective_date' => date(DATE_ATOM, strtotime($currentPromo['promo_from'])) . '/' . date(
                                 DATE_ATOM,
-                                strtotime($row->promo_due)
+                                strtotime($currentPromo['promo_due'])
                             )
                     )
                 );
