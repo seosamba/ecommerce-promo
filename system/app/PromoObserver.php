@@ -38,7 +38,7 @@ class PromoObserver implements Interfaces_Observer
             } elseif (strtotime($currentPromo['promo_from']) < $now) {
                 $currentPrice = $object->getCurrentPrice();
                 if (empty($currentPrice)) {
-                    $currentPrice = $object->getOriginalPrice();
+                    $currentPrice = $object->getPrice();
                 }
 
                 $currentPromo['sign'] = 'minus';
