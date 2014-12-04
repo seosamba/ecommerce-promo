@@ -13,7 +13,7 @@ class MagicSpaces_Onsale_Onsale extends Tools_MagicSpaces_Abstract {
     private function _getProductId() {
         $productMapper =  Models_Mapper_ProductMapper::getInstance();
         if (isset($this->_params[0])) {
-            $this->_productData = $productMapper->findByPageId($this->_params[0]);
+            $this->_productData = $productMapper->find($this->_params[0]);
             return $this->_params[0];
         }
         elseif (null !== ($productData = $productMapper->findByPageId($this->_toasterData['id']))) {
