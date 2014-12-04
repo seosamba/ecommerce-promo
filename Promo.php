@@ -7,6 +7,10 @@ class Promo extends Tools_Plugins_Abstract {
 
 	const DISPLAY_NAME = 'On sale';
 
+    const PRICE_TYPE_UNIT = 'unit';
+
+    const PRICE_TYPE_PERCENT = 'percent';
+
 	protected $_dependsOn = array(
 		'shopping'
 	);
@@ -34,17 +38,15 @@ class Promo extends Tools_Plugins_Abstract {
 		}
 
 		$pid = $this->_request->getParam('productId');
+        $dbTable = new Promo_DbTables_PromoDbTable();
 		if ($pid) {
-			$table = new Zend_Db_Table('plugin_promo');
-			$row = $table->find($pid)->current();
-			if ($row === null) {
-				$row = $table->createRow(array(
-					'product_id' => $pid
-				));
-			}
-			$this->_view->data = $row->toArray();
+            $promoConfig = $dbTable->getAllPromoConfigData($pid);
+            if(!empty($promoConfig)){
+                $currentPromo = array_shift($promoConfig);
+                $currentPromo['product_id'] = $pid;
+                $this->_view->data = $currentPromo;
+            }
 		}
-
 
 		if ($this->_request->isPost()) {
 			$promoFrom = filter_var($this->_request->getParam('promo-from'), FILTER_SANITIZE_STRING);
@@ -57,13 +59,28 @@ class Promo extends Tools_Plugins_Abstract {
                 ));
             }
 
-			$row->promo_price = filter_var($this->_request->getParam('promo-price'), FILTER_SANITIZE_STRING);
-			$row->promo_from = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoFrom));
-			$row->promo_due = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoDue));
+            $discount = filter_var($this->_request->getParam('promo-price'), FILTER_SANITIZE_STRING);
+            $promoFrom = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoFrom));
+            $promoDue = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoDue));
+            $promoType = filter_var($this->_request->getParam('promo-unit'), FILTER_SANITIZE_STRING);
+
+            $data = array(
+                'promo_discount' => $discount,
+                'promo_from' => $promoFrom,
+                'promo_due'  => $promoDue,
+                'price_type' => $promoType
+            );
 			try {
-				$result = $row->save();
+                $where = $dbTable->getAdapter()->quoteInto('product_id = ?', $pid);
+                $localConfigData = $dbTable->fetchRow($dbTable->select()->where($where));
+                if (!empty($localConfigData)) {
+                    $result = $dbTable->update($data, $where);
+                } else {
+                    $data['product_id'] = $pid;
+                    $result = $dbTable->insert($data);
+                }
 				if ($result) {
-					Zend_Controller_Action_HelperBroker::getStaticHelper('cache')->clean(false, false, array('prodid_' . $row->product_id));
+					Zend_Controller_Action_HelperBroker::getStaticHelper('cache')->clean(false, false, array('prodid_' . $pid));
 				}
 			} catch (Exception $e) {
 				echo $e->getMessage();
@@ -92,6 +109,7 @@ class Promo extends Tools_Plugins_Abstract {
 			if ($this->_request->has('dismiss')) {
 				try {
 					$result = $promoTable->delete('product_id IS NOT NULL');
+                    $promoGlobalConfigTable->delete('id IS NOT NULL');
 					$this->_responseHelper->success($this->_translator->translate('Updated') .' '. $result . ' products');
 				} catch (Exception $e) {
 					$this->_responseHelper->fail('Error');
@@ -101,6 +119,7 @@ class Promo extends Tools_Plugins_Abstract {
 					$discount = filter_var($this->_request->getParam('promo-price'), FILTER_VALIDATE_FLOAT);
 					$promoFrom = filter_var($this->_request->getParam('promo-from'), FILTER_SANITIZE_STRING);
 					$promoDue = filter_var($this->_request->getParam('promo-due'), FILTER_SANITIZE_STRING);
+                    $promoType = filter_var($this->_request->getParam('promo-unit'), FILTER_SANITIZE_STRING);
 
 					if (is_numeric($discount)) {
 						$discount = floatval($discount);
@@ -127,7 +146,7 @@ class Promo extends Tools_Plugins_Abstract {
                        'promo_discount' => $discount,
                        'promo_from' => $promoFrom,
                        'promo_due'  => $promoDue,
-                       'price_type' => 'percent'
+                       'price_type' => $promoType
                     );
                     if (!empty($globalConfigData)) {
                         $globalConfigData = $globalConfigData->toArray();
@@ -150,21 +169,27 @@ class Promo extends Tools_Plugins_Abstract {
                 $this->_view->discountPrice = $globalConfigData['promo_discount'];
                 $this->_view->promoFrom =  $globalConfigData['promo_from'];
                 $this->_view->promoDue = $globalConfigData['promo_due'];
+                $this->_view->discountUnit = $globalConfigData['price_type'];
             }
         }
 		echo $this->_view->render('merchandisingTab.phtml');
 	}
 
-	protected function _makeOptionPrice() {
-		$table = new Promo_DbTables_PromoDbTable();
-		if (($row = $table->fetchRow(array('product_id = ?' => $this->_options[1]))) !== null) {
-			if (strtotime($row->promo_due) < time()) {
-				$row->delete();
-				return null;
-			}
-			return $row->promo_price;
-		}
-		return null;
-	}
+
+    //Todo change this for new structure
+    protected function _makeOptionPrice()
+    {
+        if ($this->_options[1]) {
+            $table = new Promo_DbTables_PromoDbTable();
+            if (($row = $table->fetchRow(array('product_id = ?' => $this->_options[1]))) !== null) {
+                if (strtotime($row->promo_due) < time()) {
+                    $row->delete();
+                    return null;
+                }
+                return $row->promo_price;
+
+            }
+        }
+    }
 
 }

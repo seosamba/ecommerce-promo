@@ -6,8 +6,9 @@
 		<fieldset class="background">
 			<legend class="large background"><?php echo $this->translate('Set this product on sale');?>:</legend>
 			<p>
-				<label class="mt5px grid_5 alpha" for="promo-price"><?php echo $this->translate('Sale price'); ?> (<span id="promo-price-unit"></span>):</label>
-				<?php echo $this->formText('promo-price', isset($this->data) ? $this->data['promo_price'] : null, array('class' => 'grid_4 omega')); ?>
+				<label class="mt5px grid_3 alpha" for="promo-price"><?php echo $this->translate('Sale price'); ?>:</label>
+                <?php echo $this->formSelect('promo-unit', isset($this->data['type']) ? $this->data['type'] : '', array('class' => 'grid_2 omega'), array(Promo::PRICE_TYPE_PERCENT => Promo::PRICE_TYPE_PERCENT, Promo::PRICE_TYPE_UNIT => Promo::PRICE_TYPE_UNIT)); ?>
+                <?php echo $this->formText('promo-price', isset($this->data['discount']) ? $this->data['discount'] : null, array('class' => 'grid_4 omega')); ?>
                 <label class="mt5px labeled grid_3 text-center omega">
                     <span><?php echo $this->translate('Time');?></span><i class="tooltip info ticon-question-sign icon16 mb5px ml3"
                     title="<?php echo $this->translate('Sales time depends on your local server time settings');?>"></i>
