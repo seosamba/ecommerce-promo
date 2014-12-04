@@ -11,6 +11,12 @@ CREATE TABLE IF NOT EXISTS `plugin_promo_main_config` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DELETE FROM `observers_queue` WHERE `observer` = 'Tools_GroupPriceObserver';
+DELETE FROM `observers_queue` WHERE `observer` = 'PromoObserver';
+
+INSERT INTO `observers_queue` (`observable`, `observer`) VALUES ('Models_Model_Product', 'Tools_GroupPriceObserver');
+INSERT INTO `observers_queue` (`observable`, `observer`) VALUES ('Models_Model_Product', 'PromoObserver');
+
 -- These alters are always the latest and updated version of the database
 UPDATE `plugin` SET `version`='2.3.1' WHERE `name`='promo';
 SELECT version FROM `plugin` WHERE `name` = 'promo';
