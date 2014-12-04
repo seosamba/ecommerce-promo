@@ -179,7 +179,7 @@ class Promo extends Tools_Plugins_Abstract {
     {
         if ($this->_options[1]) {
             $table = new Promo_DbTables_PromoDbTable();
-            $product = Models_Mapper_ProductMapper::getInstance()->getInstance()->findByPageId($this->_options[1]);
+            $product = Models_Mapper_ProductMapper::getInstance()->getInstance()->find($this->_options[1]);
             $promoConfig = $table->getAllPromoConfigData($this->_options[1]);
             if (empty($promoConfig)) {
                 return null;
