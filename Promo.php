@@ -175,20 +175,33 @@ class Promo extends Tools_Plugins_Abstract {
 		echo $this->_view->render('merchandisingTab.phtml');
 	}
 
-
-    //Todo change this for new structure
     protected function _makeOptionPrice()
     {
         if ($this->_options[1]) {
             $table = new Promo_DbTables_PromoDbTable();
-            if (($row = $table->fetchRow(array('product_id = ?' => $this->_options[1]))) !== null) {
-                if (strtotime($row->promo_due) < time()) {
-                    $row->delete();
-                    return null;
-                }
-                return $row->promo_price;
-
+            $product = Models_Mapper_ProductMapper::getInstance()->getInstance()->findByPageId($this->_options[1]);
+            $promoConfig = $table->getAllPromoConfigData($this->_options[1]);
+            if (empty($promoConfig)) {
+                return null;
             }
+            $currentPromo = array_shift($promoConfig);
+
+            // Checked the current date within a range
+            if (strtotime($currentPromo['promo_due']) < time()) {
+                if ($currentPromo['scope'] === 'global') {
+                    $promoGlobalConfigTable = new Zend_Db_Table('plugin_promo_main_config');
+                    $promoGlobalConfigTable->delete('id IS NOT NULL');
+                }
+                return null;
+            } elseif (strtotime($currentPromo['promo_from']) > time()) {
+                return null;
+            }
+            $currentPrice = $product->getCurrentPrice();
+            if (empty($currentPrice)) {
+                $currentPrice = $product->getPrice();
+            }
+            $currentPromo['sign'] = 'minus';
+            return Tools_DiscountTools::applyDiscountData($currentPrice, $currentPromo);
         }
     }
 

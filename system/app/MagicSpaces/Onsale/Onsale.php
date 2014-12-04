@@ -1,15 +1,23 @@
 <?php
 class MagicSpaces_Onsale_Onsale extends Tools_MagicSpaces_Abstract {
 
+    /**
+     * @var null|Models_Model_Product
+     */
+    protected $_productData = null;
+
     protected function _run() {
         return ($this->_checkPromoForProduct($this->_getProductId())) ? $this->_spaceContent : '';
     }
 
     private function _getProductId() {
+        $productMapper =  Models_Mapper_ProductMapper::getInstance();
         if (isset($this->_params[0])) {
+            $this->_productData = $productMapper->findByPageId($this->_params[0]);
             return $this->_params[0];
         }
-        elseif (null !== ($productData = Models_Mapper_ProductMapper::getInstance()->findByPageId($this->_toasterData['id']))) {
+        elseif (null !== ($productData = $productMapper->findByPageId($this->_toasterData['id']))) {
+            $this->_productData = $productData;
             return $productData->getId();
         }
 
@@ -23,22 +31,33 @@ class MagicSpaces_Onsale_Onsale extends Tools_MagicSpaces_Abstract {
 
         // Get promo-data to product
         $table = new Promo_DbTables_PromoDbTable();
-        if (null === ($row = $table->fetchRow(array('product_id = ?' => $productId)))) {
-            return false;
+        $promoConfig = $table->getAllPromoConfigData($productId);
+        if(empty($promoConfig)){
+           return false;
         }
+        $currentPromo = array_shift($promoConfig);
 
         // Checked the current date within a range
-        if (strtotime($row->promo_due) < time()) {
-            $row->delete();
+        if (strtotime($currentPromo['promo_due']) < time()) {
+            if ($currentPromo['scope'] === 'global') {
+                $promoGlobalConfigTable = new Zend_Db_Table('plugin_promo_main_config');
+                $promoGlobalConfigTable->delete('id IS NOT NULL');
+            }
             return false;
         }
-        elseif (strtotime($row->promo_from) > time()) {
+        elseif (strtotime($currentPromo['promo_from']) > time()) {
             return false;
         }
 
         // If noZeroPrice in config set to 1 - hidden promo text
         $noZeroPrice = Models_Mapper_ShoppingConfig::getInstance()->getConfigParam('noZeroPrice');
-        if ((int) $noZeroPrice === 1 && floatval($row->promo_price) == 0) {
+        $currentPrice = $this->_productData->getCurrentPrice();
+        if (empty($currentPrice)) {
+            $currentPrice = $this->_productData->getPrice();
+        }
+        $currentPromo['sign'] = 'minus';
+        $priceWithPromo = Tools_DiscountTools::applyDiscountData($currentPrice, $currentPromo);
+        if ((int) $noZeroPrice === 1 && floatval($priceWithPromo) <= 0) {
             return false;
         }
 
