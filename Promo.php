@@ -123,7 +123,7 @@ class Promo extends Tools_Plugins_Abstract {
 
 					if (is_numeric($discount)) {
 						$discount = floatval($discount);
-						if ($discount > 100 || $discount < 0) {
+						if ($promoType === 'percent' && ($discount > 100 || $discount < 0)) {
 							$this->_responseHelper->fail($this->_translator->translate('Sales discount should be between 0 and 100 percents'));
 						}
 					} else {
