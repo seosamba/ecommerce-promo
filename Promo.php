@@ -41,6 +41,7 @@ class Promo extends Tools_Plugins_Abstract {
         $dbTable = new Promo_DbTables_PromoDbTable();
 		if ($pid) {
             $promoConfig = $dbTable->getAllPromoConfigData($pid);
+            $this->_view->data = array('product_id' => $pid);
             if(!empty($promoConfig)){
                 $currentPromo = array_shift($promoConfig);
                 $currentPromo['product_id'] = $pid;
