@@ -7,7 +7,9 @@ class Promo extends Tools_Plugins_Abstract {
 
 	const DISPLAY_NAME = 'On sale';
 
-	protected $_dependsOn = array(
+	const PROMO_SECURE_TOKEN = 'PromoToken';
+
+    protected $_dependsOn = array(
 		'shopping'
 	);
 
@@ -47,7 +49,12 @@ class Promo extends Tools_Plugins_Abstract {
 
 
 		if ($this->_request->isPost()) {
-			$promoFrom = filter_var($this->_request->getParam('promo-from'), FILTER_SANITIZE_STRING);
+            $secureToken = $this->_request->getParam(Tools_System_Tools::CSRF_SECURE_TOKEN, false);
+            $tokenValid = Tools_System_Tools::validateToken($secureToken, self::PROMO_SECURE_TOKEN);
+            if (!$tokenValid) {
+                $this->_responseHelper->fail('');
+            }
+            $promoFrom = filter_var($this->_request->getParam('promo-from'), FILTER_SANITIZE_STRING);
 			$promoDue = filter_var($this->_request->getParam('promo-due'), FILTER_SANITIZE_STRING);
             $dateValidator = new Zend_Validate_Date(array('format' => 'd-M-Y', 'locale' => 'en'));
             if (!$dateValidator->isValid($promoDue) || !$dateValidator->isValid($promoFrom)) {
@@ -86,7 +93,12 @@ class Promo extends Tools_Plugins_Abstract {
 
 		$cacheHelper = Zend_Controller_Action_HelperBroker::getStaticHelper('cache');
 		if ($this->_request->isPost()) {
-			$promoTable = new Zend_Db_Table('plugin_promo');
+            $secureToken = $this->_request->getParam(Tools_System_Tools::CSRF_SECURE_TOKEN, false);
+            $tokenValid = Tools_System_Tools::validateToken($secureToken, self::PROMO_SECURE_TOKEN);
+            if (!$tokenValid) {
+                $this->_responseHelper->fail('');
+            }
+            $promoTable = new Zend_Db_Table('plugin_promo');
 			if ($this->_request->has('dismiss')) {
 				try {
 					$result = $promoTable->delete('product_id IS NOT NULL');

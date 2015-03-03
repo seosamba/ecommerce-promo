@@ -35,7 +35,8 @@
 			</p>
             <?php echo $this->formSubmit('promo-save', $this->translate('Apply'), array('class' => 'btn icon-checkmark-3'))?>
 		</fieldset>
-	</form>
+        <input type="hidden" name="<?php echo Tools_System_Tools::CSRF_SECURE_TOKEN;?>" value="<?php echo Tools_System_Tools::initSecureToken(Promo::PROMO_SECURE_TOKEN);?>">
+    </form>
 	<script type="text/javascript">
 		if (window.jQuery && jQuery.ui) {
 			$(function () {

@@ -35,6 +35,7 @@
             $this->translate('Dismiss all promo prices'),
             array('class' => 'btn error fl-left', 'type' => 'submit')
         ); ?>
+        <input type="hidden" name="<?php echo Tools_System_Tools::CSRF_SECURE_TOKEN;?>" value="<?php echo Tools_System_Tools::initSecureToken(Promo::PROMO_SECURE_TOKEN);?>">
         <?php echo $this->formButton('promo-save', $this->translate('Apply to all products'), array('type' => 'submit', 'class' => 'btn icon-checkmark-3')); ?>
     </fieldset>
 </form>
