@@ -53,7 +53,9 @@ class PromoObserver implements Interfaces_Observer
                             'name' => 'promo',
                             'discount' => $currentPromo['discount'],
                             'type' => $currentPromo['type'],
-                            'sign' => $currentPromo['sign']
+                            'sign' => $currentPromo['sign'],
+                            'checkout_label' => 'promo',
+                            'display_on_checkout' => true
                         )
                     );
                     $object->setProductDiscounts($productDiscounts);
