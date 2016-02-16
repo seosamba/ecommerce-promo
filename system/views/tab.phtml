@@ -26,7 +26,7 @@
 			<p>
 				<label class="mt5px grid_5 alpha" for="promo-due"><?php echo $this->translate('Expiry date'); ?>:</label>
 				<label class="labeled icon right grid_4 omega">
-                    <?php echo $this->formText('promo-due', isset($this->data['promo_due']) ? date('d-M-Y', strtotime($this->data['promo_due'])) : null); ?>
+                    <?php echo $this->formText('promo-due', isset($this->data['promo_due']) ? date('d-M-Y', strtotime("-1 day",strtotime($this->data['promo_due']))) : null); ?>
                     <i class="ticon-calendar icon16"></i>
                 </label>
                 <label class="mt5px labeled text-center grid_3">
