@@ -66,7 +66,7 @@ class Promo extends Tools_Plugins_Abstract {
 
 			$row->promo_price = filter_var($this->_request->getParam('promo-price'), FILTER_SANITIZE_STRING);
 			$row->promo_from = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoFrom));
-			$row->promo_due = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoDue));
+			$row->promo_due = date(Tools_System_Tools::DATE_MYSQL, strtotime("+1 day",strtotime($promoDue)));
 			try {
 				$result = $row->save();
 				if ($result) {
@@ -128,7 +128,7 @@ class Promo extends Tools_Plugins_Abstract {
 						$this->_responseHelper->fail($this->_translator->translate('Wrong date format'));
 					}
 					if ($dateValidator->isValid($promoDue)) {
-						$promoDue = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoDue));
+						$promoDue = date(Tools_System_Tools::DATE_MYSQL, strtotime("+1 day",strtotime($promoDue)));
 					} else {
 						$this->_responseHelper->fail($this->_translator->translate('Wrong date format'));
 					}
