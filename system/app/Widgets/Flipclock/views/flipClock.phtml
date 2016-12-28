@@ -1,0 +1,80 @@
+<?php
+$this->headLink()->appendStylesheet($this->websiteUrl . "plugins/promo/web/css/flipclock/flipclock.css");
+$this->headScript()->appendFile($this->websiteUrl . "plugins/promo/web/js/libs/flipclock/flipclock.js");
+?>
+
+<div class="clock" style="display: none;"></div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var clock;
+
+        clock = $('.clock').FlipClock({
+            clockFace: '<?php echo $this->dayCounter;?>',
+            autoStart: false,
+            countdown: true,
+            language: '<?php echo $this->language;?>',
+            am: true,
+            callbacks: {
+                start: function () {
+                    $('.clock').show();
+                },
+                stop: function () {
+                    $('.clock').hide();
+                }
+            }
+        });
+
+        <?php if($this->labelAcl):?>
+        $('.flip-clock-label').hide();
+        <?php endif;?>
+
+        clock.setTime(<?php echo $this->dateDiff;?>);
+        clock.start();
+    });
+</script>
+
+<style>
+    body .flip-clock-wrapper ul li a div div.inn, body .flip-clock-small-wrapper ul li a div div.inn {
+        font-size: 100px;
+
+    <?php if($this->timeColor):?> color: <?php echo $this->timeColor;?>; /*time color*/
+    <?php endif;?><?php if($this->timeBackground):?> background-color: <?php echo $this->timeBackground;?>; /*time background color*/
+    <?php endif;?>
+    }
+
+    body .flip-clock-dot, body .flip-clock-small-wrapper .flip-clock-dot {
+    <?php if($this->timeColor):?> background: <?php echo $this->diliverColor?>; /*dot color*/
+    <?php endif;?>
+
+    }
+
+    .flip-clock-divider .flip-clock-label {
+        font-size: 28px;
+        right: -100px;
+    <?php if($this->zoom):?> color: <?php echo $this->metricColor;?>;
+    <?php endif;?>
+
+    }
+
+    .flip-clock-wrapper ul {
+        font-size: 0;
+    }
+
+    .flip-clock-divider.minutes .flip-clock-label {
+        right: -118px;
+    }
+
+    .flip-clock-divider.seconds .flip-clock-label {
+        right: -121px;
+    }
+
+    .clock {
+    <?php if($this->zoom):?> zoom: <?php echo $this->zoom;?>;
+        -moz-transform: scale(<?php echo $this->zoom;?>);
+    <?php endif;?>
+    }
+
+</style>
+
+
