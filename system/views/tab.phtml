@@ -1,7 +1,12 @@
 <?php $uniqId = substr(md5(time()), 5, 15); ?>
 <?php if (isset($this->data)): ?>
+    <?php if(!empty($this->data['product_id'])):?>
+        <?php $urlSuffix = '/plugin/promo/productId/'.$this->data['product_id'].'/run/tab';?>
+    <?php else:?>
+        <?php $urlSuffix = '';?>
+    <?php endif;?>
 	<form id="form-<?php echo $uniqId; ?>" class="binded-plugin clearfix prefix_3 suffix_3 grid_6 mt50px"
-	      action="<?php echo trim($this->websiteUrl, '/') . $this->url(isset($this->data) ? array('productId' => $this->data['product_id']) : null); ?>"
+	      action="<?php echo trim($this->websiteUrl, '/') . $urlSuffix; ?>"
 	      method="POST">
 		<fieldset class="background">
 			<legend class="large background"><?php echo $this->translate('Set this product on sale');?>:</legend>
