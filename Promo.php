@@ -30,6 +30,56 @@ class Promo extends Tools_Plugins_Abstract {
 		$this->_view->setScriptPath(__DIR__ . '/system/views');
 	}
 
+    public function assignPromoMassAction() {
+        if (!Tools_Security_Acl::isAllowed(Shopping::RESOURCE_STORE_MANAGEMENT)) {
+            throw new Exceptions_SeotoasterPluginException('Forbidden');
+        }
+
+        if ($this->_request->isPost()) {
+            $secureToken = $this->_request->getParam(Tools_System_Tools::CSRF_SECURE_TOKEN, false);
+            $tokenValid = Tools_System_Tools::validateToken($secureToken, self::PROMO_SECURE_TOKEN);
+            if (!$tokenValid) {
+                $this->_responseHelper->fail('');
+            }
+
+            $productIds = $this->_request->getParam('productIds');
+
+            if(!empty($productIds)) {
+                $promoFrom = filter_var($this->_request->getParam('promo-from'), FILTER_SANITIZE_STRING);
+                $promoDue = filter_var($this->_request->getParam('promo-due'), FILTER_SANITIZE_STRING);
+
+                $dateValidator = new Zend_Validate_Date(array('format' => 'd-M-Y', 'locale' => 'en'));
+                if (!$dateValidator->isValid($promoDue) || !$dateValidator->isValid($promoFrom)) {
+                    $this->_responseHelper->fail($this->_translator->translate('Wrong date format'));
+                }
+
+                $promoPrice = filter_var($this->_request->getParam('promo-price'), FILTER_SANITIZE_STRING);
+
+                $table = new Zend_Db_Table('plugin_promo');
+                foreach ($productIds as $pid) {
+                    $row = $table->find($pid)->current();
+                    if ($row === null) {
+                        $row = $table->createRow(array(
+                            'product_id' => $pid
+                        ));
+                    }
+
+                    $row->promo_price = $promoPrice;
+                    $row->promo_from = date(Tools_System_Tools::DATE_MYSQL, strtotime($promoFrom));
+                    $row->promo_due = date(Tools_System_Tools::DATE_MYSQL, strtotime("+1 day",strtotime($promoDue)));
+
+                    try {
+                        $row->save();
+                    } catch (Exception $e) {
+                        $this->_responseHelper->fail($e->getMessage());
+                    }
+                }
+
+                $this->_responseHelper->success($this->_translator->translate('Done'));
+            }
+        }
+    }
+
 	public function tabAction() {
 		if (!Tools_Security_Acl::isAllowed(Shopping::RESOURCE_STORE_MANAGEMENT)) {
 			throw new Exceptions_SeotoasterPluginException('Forbidden');
