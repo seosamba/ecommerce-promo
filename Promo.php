@@ -37,7 +37,7 @@ class Promo extends Tools_Plugins_Abstract {
 
         if ($this->_request->isPost()) {
             $secureToken = $this->_request->getParam(Tools_System_Tools::CSRF_SECURE_TOKEN, false);
-            $tokenValid = Tools_System_Tools::validateToken($secureToken, self::PROMO_SECURE_TOKEN);
+            $tokenValid = Tools_System_Tools::validateToken($secureToken, Shopping::SHOPPING_SECURE_TOKEN);
             if (!$tokenValid) {
                 $this->_responseHelper->fail('');
             }
