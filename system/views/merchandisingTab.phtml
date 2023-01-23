@@ -36,10 +36,12 @@
             $this->translate('Dismiss all promo prices'),
             array('class' => 'btn error fl-left', 'type' => 'submit')
         ); ?>
+        <input type="hidden" name="<?php echo Tools_System_Tools::CSRF_SECURE_TOKEN;?>" value="<?php echo $this->secureToken;?>" />
         <?php echo $this->formButton('promo-save', $this->translate('Apply to all products'), array('type' => 'submit', 'class' => 'btn icon-checkmark-3')); ?>
     </fieldset>
 </form>
 <form id="dismiss-promo" class="binded-plugin" action="<?php echo trim($this->websiteUrl, '/') . $this->url() . '/dismiss/1'; ?>" method="POST">
+    <input type="hidden" name="<?php echo Tools_System_Tools::CSRF_SECURE_TOKEN;?>" value="<?php echo $this->secureToken;?>" />
 </form>
 <script type="text/javascript">
     $(function(){

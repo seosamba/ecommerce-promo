@@ -11,7 +11,9 @@ class Promo extends Tools_Plugins_Abstract {
 
     const PRICE_TYPE_PERCENT = 'percent';
 
-	protected $_dependsOn = array(
+	const PROMO_SECURE_TOKEN = 'PromoToken';
+
+    protected $_dependsOn = array(
 		'shopping'
 	);
 
