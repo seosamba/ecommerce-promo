@@ -1,5 +1,3 @@
-# [Plugin Name]
-
 [![PHP](https://img.shields.io/badge/PHP-7.4%20to%208.2-blue)](https://www.php.net/)
 [![MySQL](https://img.shields.io/badge/MySQL-5.x%20%2F%208.x-orange)](https://www.mysql.com/)
 [![License](https://img.shields.io/badge/License-GPLv3%20%2F%20Commercial-lightgrey)](https://www.seotoaster.com/seotoaster-license.html)
